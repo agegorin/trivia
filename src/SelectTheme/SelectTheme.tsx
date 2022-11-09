@@ -22,24 +22,20 @@ const SelectTheme = ({ callNextState }: Props) => {
     triviaStore.getThemes();
   }, [])
 
-  triviaStore.themes.map((el: TriviaTheme) => {
-    console.log(`${el.id} ${el.title}`);
-  })
-
   return <Layout className="SelectTheme">
-    <Header className="SelectTheme__header"><Title>Trivia</Title></Header>
+    <Header className="SelectTheme__header"><Title>Select theme</Title></Header>
     <Content className="SelectTheme__themes">
       {triviaStore.loading && <SpinFC />}
-      <Space size="middle" direction="vertical" align="center">
-        {triviaStore.themes.map((el: TriviaTheme) =>
-          <Button block size="large" key={el.id}
-            onClick={() => {
-              triviaStore.selectTheme(el.id);
-              callNextState();
-            }}
-          >{el.title}</Button>
-        )}
-      </Space>
+      {triviaStore.themes.map((el: TriviaTheme) =>
+        <Button size="large" key={el.id}
+          block
+          className="SelectTheme__theme"
+          onClick={() => {
+            triviaStore.selectTheme(el.id);
+            callNextState();
+          }}
+        >{el.title}</Button>
+      )}
     </Content>
   </Layout>
 }

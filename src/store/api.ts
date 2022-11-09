@@ -1,7 +1,7 @@
 import {TriviaTheme, TriviaClue} from "./types"
 
-export const getThemes = ():Promise<TriviaTheme[]> => {
-  return fetch("https://jservice.io/api/categories?count=10")
+export const getThemes = (count: number):Promise<TriviaTheme[]> => {
+  return fetch(`https://jservice.io/api/categories?count=${count}`)
     .then((res) => res.json())
 }
 
