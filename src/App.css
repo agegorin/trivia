@@ -1,8 +1,8 @@
 .App {
   min-width: 300px;
-  max-width: 800px;
-  margin: 10px auto;
-  background: rgb(228, 228, 228);
-  padding: 20px;
-  border-radius: 5px;
+  max-width: 600px;
+  min-height: 100vh;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 1rem;
 }

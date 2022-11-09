@@ -1,11 +1,26 @@
 import React from 'react';
+import 'antd/dist/antd.css';
 
 import './App.css';
 
+import Welcome from './Welcome/Welcome';
+
+enum TriviaStates {
+  WELCOME,
+  SELECTTHEME,
+  CLUE,
+  RESULTS,
+  ERROR
+}
+
 function App() {
+
+  let currentState: TriviaStates = TriviaStates.WELCOME;
+
   return (
     <div className="App">
-      <h1>Trivia Test App</h1>
+      {currentState === TriviaStates.WELCOME && <Welcome />}
+      
     </div>
   );
 }
