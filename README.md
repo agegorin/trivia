@@ -1,46 +1,32 @@
-# Getting Started with Create React App
+Тестовое задание. Приложение для игры в викторину.
+===================
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Описание задачи:
 
-## Available Scripts
+Создать простую викторину на готовом открытом API (напр, https://jservice.io/)
+Пользователь вводит своё имя на старте
+Перед началом игры можно выбрать категорию из 10 вариантов
+После старта уровень сложности постепенно повышается, пока игра не доходит до 10 вопроса
+В конце пользователю отображается набранное количество очков 
+Отображается доска рекордов с именами пользователей
+Если это рекорд по сравнению с прошлыми играми пользователя (хрань можно в local storage), это тоже отображается
+Для упрощения тестирования стоит держать правильный ответ уже вписанным в input
 
-In the project directory, you can run:
 
-### `npm start`
+### Требования:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+React
+TS (можно только файлы бизнес-логики)
+UI-библиотека (можно, antd, но не обязательно)
+mobx в качестве state manager (он очень простой, можно быстро разобраться)
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
 
-### `npm test`
+### Что будет важно при оценке:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+Чистота кода
+Грамотное разделение по файлам и архитектура проекта
+Не слишком сложная реализация
+Общепринятые подходы (линтинг,  переменные окружения, паттерны проектирования,...)
+Обработка исключений
+Простой, но приятный UI
+Такой же простой, но удобный UX
