@@ -1,14 +1,17 @@
-import Space from "antd/lib/space";
 import Title from "antd/lib/typography/Title";
 import Button from "antd/lib/button";
 
 import "./Welcome.css";
 
-const Welcome = () => {
+interface Props {
+  callNextState: () => void
+}
 
-  return <div className="Welcome">
+const Welcome = ({ callNextState }: Props) => {
+
+return <div className="Welcome">
       <Title>Trivia</Title>
-      <Button type="primary" size="large" shape="round">Start</Button>
+      <Button type="primary" size="large" shape="round" onClick={() => callNextState()}>Start</Button>
   </div>
 }
 
