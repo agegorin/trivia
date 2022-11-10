@@ -10,7 +10,7 @@ export interface TriviaClue {
   id: number
   answer: string
   question: string
-  value: number
+  value: number | null
   airdate?: string //"1985-02-08T12:00:00.000Z"
   created_at?: string //"2022-07-27T00:24:05.346Z"
   updated_at?: string // "2022-07-27T00:24:05.346Z"

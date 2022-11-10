@@ -5,6 +5,7 @@ import './App.css';
 
 import Welcome from './Welcome/Welcome';
 import SelectTheme from './SelectTheme/SelectTheme';
+import Clue from './Clue/Clue';
 
 enum TriviaStates {
   WELCOME,
@@ -20,9 +21,13 @@ function App() {
   let [currentClue, setCurrentClue] = useState(0);
 
   let callNextState = () => {
-    if (currentState === TriviaStates.WELCOME) {
-      setCurrentState(TriviaStates.SELECTTHEME);
-      return;
+    switch (currentState) {
+      case TriviaStates.WELCOME:
+        setCurrentState(TriviaStates.SELECTTHEME);
+        break;
+      case TriviaStates.SELECTTHEME:
+        setCurrentState(TriviaStates.CLUE);
+        break;
     }
   }
 
@@ -30,6 +35,7 @@ function App() {
     <div className="App">
       {currentState === TriviaStates.WELCOME && <Welcome callNextState={callNextState} />}
       {currentState === TriviaStates.SELECTTHEME && <SelectTheme callNextState={callNextState} />}
+      {currentState === TriviaStates.CLUE && <Clue callNextState={callNextState} />}
       
     </div>
   );
