@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 
 import Text from "antd/lib/typography/Text";
 import Button from "antd/lib/button";
-import Input from "antd/lib/input/Input";
+import Input, { InputRef } from "antd/lib/input/Input";
 import SpinFC from "antd/lib/spin";
 
 import "./Clue.css";
@@ -15,12 +15,14 @@ import PageLayout from "../PageLayout/PageLayout";
 const Clue = () => {
   const { triviaStore } = useStore();
 
+  const inputRef = useRef<InputRef>(null);
   const [userInput, setUserInput] = useState("");
 
   const clue = triviaStore.getCurrentClue();
 
   useEffect(() => {
     if (clue) setUserInput(clue.answer); // Правильный ответ подставляется для целей тестирования
+    inputRef.current?.focus();
   }, [clue])
 
   const getFooter = () => {
@@ -30,6 +32,7 @@ const Clue = () => {
         className="Clue__answerInput"
         disabled={triviaStore.state !== TriviaStates.CLUE_ASK}
         status={triviaStore.state === TriviaStates.CLUE_WRONG ? "error" : ""}
+        ref={inputRef}
         value={userInput}
         onChange={(ev) => setUserInput(ev.currentTarget.value)}
         onPressEnter={() => triviaStore.checkAnswer(userInput)}
@@ -45,18 +48,11 @@ const Clue = () => {
         </>
       }
 
-      {triviaStore.state !== TriviaStates.CLUE_ASK && triviaStore.currentClue < cluesForGame - 1 &&
+      {triviaStore.state !== TriviaStates.CLUE_ASK &&
         <Button size="large" type="primary"
           className="Clue__checkButton"
           onClick={() => triviaStore.nextClue()}
-        >Next clue</Button>
-      }
-
-      {triviaStore.state !== TriviaStates.CLUE_ASK && triviaStore.currentClue >= cluesForGame - 1 &&
-        <Button size="large" type="primary"
-          className="Clue__checkButton"
-          onClick={() => triviaStore.nextClue()}
-        >See results</Button>
+        >{triviaStore.currentClue < cluesForGame - 1 ? "Next clue" : "See results"}</Button>
       }
     </>
   }
