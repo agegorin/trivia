@@ -8,6 +8,7 @@ class TriviaStore {
   state: TriviaStates = TriviaStates.WELCOME;
   currentClue: number = 0;
   score: number = 0;
+  username: string = "";
 
   themes: TriviaTheme[] = [];
   clues: TriviaClue[] = [];
@@ -18,10 +19,12 @@ class TriviaStore {
     makeAutoObservable(this);
   }
 
-  startGame = () => {
+  startGame = (username: string) => {
     this.score = 0;
+    this.username = username;
     this.getThemes();
     this.state = TriviaStates.SELECTTHEME;
+    console.log(this.username);
   }
 
   getThemes = () => {

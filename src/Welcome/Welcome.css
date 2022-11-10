@@ -7,3 +7,13 @@
   align-items: center;
   justify-content: center;
 }
+
+.Welcome__text {
+  font-size: 1.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.Welcome__username {
+  width: 300px;
+  margin-bottom: 1.6rem;
+}

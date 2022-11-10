@@ -16,7 +16,7 @@ function App() {
   const getCurrentElement = () => {
     switch (triviaStore.state) {
       case TriviaStates.WELCOME:
-        return <Welcome callNextState={() => triviaStore.startGame()} />
+        return <Welcome callNextState={(username) => triviaStore.startGame(username)} />
       case TriviaStates.SELECTTHEME:
         return <SelectTheme />
       case TriviaStates.CLUE_ASK:
