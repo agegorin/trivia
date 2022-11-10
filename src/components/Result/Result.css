@@ -1,0 +1,15 @@
+.Result__list-title {
+  margin-top: 2rem;
+}
+
+.Result__list {
+  width: 100%;
+}
+
+.Result__list--highlight{
+  font-weight: bold;
+}
+
+.Result__list-name {
+  text-align: right;
+}

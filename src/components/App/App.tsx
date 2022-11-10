@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { observer } from 'mobx-react-lite';
 import 'antd/dist/antd.css';
 
 import './App.css';
-import { TriviaStates } from "./store/types";
-import { useStore } from "./store/StoreContext";
+import { TriviaStates } from "../../store/types";
+import { useStore } from "../../store/StoreContext";
 
-import Welcome from './Welcome/Welcome';
-import SelectTheme from './SelectTheme/SelectTheme';
-import Clue from './Clue/Clue';
-import Result from './Result/Result';
-import Error from './Error/Error';
+import Welcome from '../Welcome/Welcome';
+import SelectTheme from '../SelectTheme/SelectTheme';
+import Clue from '../Clue/Clue';
+import Result from '../Result/Result';
+import Error from '../Error/Error';
 
 function App() {
   const { triviaStore } = useStore();

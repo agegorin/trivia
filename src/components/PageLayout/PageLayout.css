@@ -1,15 +1,17 @@
-.Clue {
+.PageLayout {
   width: 100%;
   min-height: calc(100vh - 2rem);
   background: none;
+
+  font-size: 1.4rem;
 }
 
-.Clue__header {
+.PageLayout__header {
   background: none;
   text-align: center;
 }
 
-.Clue__content {
+.PageLayout__content {
   align-self: center;
   min-width: 300px;
 
@@ -19,30 +21,7 @@
   justify-content: center;
 }
 
-.Clue__question {
-  text-align: center;
-  margin-bottom: 1rem;
-  font-size: 2.4rem;
-}
-
-.Clue__result {
-  height: 3rem;
-  font-size: 1.6rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-}
-
-.Clue__answerInput {
-  text-align: center;
-  width: 300px;
-  margin-bottom: 1rem;
-}
-
-.Clue__checkButton {
-  width: 300px;
-}
-
-.Clue__footer {
+.PageLayout__footer {
   background: none;
 
   display: flex;

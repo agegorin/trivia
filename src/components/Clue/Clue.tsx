@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 
-import Title from "antd/lib/typography/Title";
 import Text from "antd/lib/typography/Text";
-import Layout, { Content, Header, Footer } from "antd/lib/layout/layout";
 import Button from "antd/lib/button";
 import Input from "antd/lib/input/Input";
 import SpinFC from "antd/lib/spin";
 
 import "./Clue.css";
-import { cluesForGame } from "../settings";
-import { useStore } from "../store/StoreContext";
-import { TriviaStates } from "../store/types";
+import { cluesForGame } from "../../settings";
+import { useStore } from "../../store/StoreContext";
+import { TriviaStates } from "../../store/types";
+import PageLayout from "../PageLayout/PageLayout";
 
 const Clue = () => {
   const { triviaStore } = useStore();
@@ -24,22 +23,8 @@ const Clue = () => {
     if (clue) setUserInput(clue.answer); // Правильный ответ подставляется для целей тестирования
   }, [clue])
 
-  return <Layout className="Clue">
-    <Header className="Clue__header"><Title>CLUE NUMBER {triviaStore.currentClue + 1}</Title></Header>
-    <Content className="Clue__content">
-      {triviaStore.loading && <SpinFC />}
-      {!triviaStore.loading && clue &&
-        <>
-          <Text>Value: {clue.value}</Text>
-          <Text className="Clue__question">{clue.question}</Text>
-          <Text className="Clue__result">
-            {triviaStore.state === TriviaStates.CLUE_RIGHT && "You right!"}
-            {triviaStore.state === TriviaStates.CLUE_WRONG && `Wrong. Right answer: ${clue.answer}`}
-          </Text>
-        </>
-      }
-    </Content>
-    <Footer className="Clue__footer">
+  const getFooter = () => {
+    return <>
       <Input
         size="large"
         className="Clue__answerInput"
@@ -72,8 +57,25 @@ const Clue = () => {
           onClick={() => triviaStore.nextClue()}
         >See results</Button>
       }
-    </Footer>
-  </Layout>
+    </>
+  }
+
+  return <PageLayout
+    header={`CLUE NUMBER ${triviaStore.currentClue + 1}`}
+    footer={getFooter()}
+  >
+    {triviaStore.loading && <SpinFC />}
+    {!triviaStore.loading && clue &&
+      <>
+        <Text>Value: {clue.value}</Text>
+        <Text className="Clue__question">{clue.question}</Text>
+        <Text className="Clue__result">
+          {triviaStore.state === TriviaStates.CLUE_RIGHT && "You right!"}
+          {triviaStore.state === TriviaStates.CLUE_WRONG && `Wrong. Right answer: ${clue.answer}`}
+        </Text>
+      </>
+    }
+  </PageLayout>
 }
 
 export default observer(Clue);

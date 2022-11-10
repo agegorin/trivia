@@ -1,14 +1,13 @@
 import { observer } from "mobx-react-lite";
 
-import Title from "antd/lib/typography/Title";
 import Text from "antd/lib/typography/Text";
 import Button from "antd/lib/button";
-import Layout, { Content, Footer, Header } from "antd/lib/layout/layout";
 import { Col, Row } from "antd/lib/grid";
 
 
 import "./Result.css";
-import { useStore } from "../store/StoreContext";
+import { useStore } from "../../store/StoreContext";
+import PageLayout from "../PageLayout/PageLayout";
 
 const Result = () => {
   const { triviaStore } = useStore();
@@ -18,9 +17,10 @@ const Result = () => {
     return "";
   }
 
-  return <Layout className="Result">
-    <Header className="Result__header"><Title>Results</Title></Header>
-    <Content className="Result__content">
+  return <PageLayout
+    header={"Results"}
+    footer={<Button size="large" type="primary" onClick={() => triviaStore.goToStart()}>Start new game</Button>}
+  >
       <Text>Yout result is {triviaStore.score}</Text>
       {triviaStore.previousScore !== null &&
         <Text>Yout previous best result was {triviaStore.previousScore}</Text>
@@ -36,11 +36,7 @@ const Result = () => {
           })}
         </div>
       }
-    </Content>
-    <Footer className="Result__footer">
-      <Button size="large" type="primary" onClick={() => triviaStore.goToStart()}>Start new game</Button>
-    </Footer>
-  </Layout>
+  </PageLayout>
 }
 
 export default observer(Result);
