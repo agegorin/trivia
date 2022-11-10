@@ -76,7 +76,7 @@ class TriviaStore {
   }
 
   checkAnswer = (answer: string) => {
-    if (this.clues[this.currentClue].answer === answer) {
+    if (simplifyString(this.clues[this.currentClue].answer) === simplifyString(answer)) {
       this.score += this.clues[this.currentClue].value as number;
       this.state = TriviaStates.CLUE_RIGHT;
     } else {
@@ -147,6 +147,10 @@ const processClues: ((clues: TriviaClue[], cluesCount: number) => TriviaClue[]) 
   selectedClues.sort((a, b) => a.value as number - (b.value as number));
 
   return selectedClues;
+}
+
+const simplifyString: ((str: string) => string) = (str: string) => {
+  return str.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
 }
 
 export default TriviaStore;
