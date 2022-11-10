@@ -16,6 +16,8 @@ class TriviaStore {
   selectedTheme: TriviaTheme | null = null;
   loading = false;
 
+  errorMessage:string = "Some unexpected error happend.";
+
   constructor() {
     makeAutoObservable(this);
     this.scores = API.getSavedScores();
@@ -37,7 +39,8 @@ class TriviaStore {
       })
       .catch((err) => {
         this.loading = false;
-        throw new Error("Problem with loading themes");
+        this.errorMessage = "Can't load themes. Mayby no internet?";
+        this.state = TriviaStates.ERROR;
       })
   }
 
@@ -50,7 +53,9 @@ class TriviaStore {
 
   _getClues = () => {
     if (this.selectedTheme === null) {
-      throw new Error("Try to get clues without seleсted theme");
+      this.errorMessage = "Selected theme accidentally have no clues";
+      this.state = TriviaStates.ERROR;
+      return;
     };
 
     this.loading = true;
@@ -61,7 +66,8 @@ class TriviaStore {
       })
       .catch((err) => {
         this.loading = false;
-        throw new Error("Problem with loading clues");
+        this.errorMessage = "Can't load clues. Mayby no internet?";
+        this.state = TriviaStates.ERROR;
       })
   }
 
@@ -115,8 +121,6 @@ const processThemes: ((themes: TriviaTheme[], count: number, cluesCount: number)
   // Не все темы содержат нужное количество вопросов
   // количечество тем увеличивается на 1, потому что API отдает один вопрос с value == null
   const themesWithClues: TriviaTheme[] = themes.filter((theme) => theme.clues_count >= cluesCount + 1);
-
-  if (themesWithClues.length < count) throw new Error("Too small amount of clues");
 
   // Выбираем случайные темы из подходящих
   for (let i = 0; i < count; i++) {

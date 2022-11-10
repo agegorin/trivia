@@ -10,6 +10,7 @@ import Welcome from './Welcome/Welcome';
 import SelectTheme from './SelectTheme/SelectTheme';
 import Clue from './Clue/Clue';
 import Result from './Result/Result';
+import Error from './Error/Error';
 
 function App() {
   const { triviaStore } = useStore();
@@ -29,8 +30,10 @@ function App() {
         return <Clue />
       case TriviaStates.RESULTS:
         return <Result />
+      case TriviaStates.ERROR:
+        return <Error />
       default:
-        return "Error happend"
+        return <Error />
     }
   }
 
