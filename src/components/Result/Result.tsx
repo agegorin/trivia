@@ -32,7 +32,7 @@ const Result = () => {
       {triviaStore.scores.length > 0 &&
         <div className="Result__list">
           {triviaStore.scores.map(el => {
-            return <Row gutter={16} className={highlightRow(el.name)}>
+            return <Row gutter={16} className={highlightRow(el.name)} key={el.name}>
               <Col span="12" className="Result__list-name">{el.name}:</Col>
               <Col span="12">{el.score}</Col>
             </Row>
