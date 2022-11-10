@@ -22,8 +22,11 @@ const Result = () => {
     footer={<Button size="large" type="primary" onClick={() => triviaStore.goToStart()}>Start new game</Button>}
   >
       <Text>Yout result is {triviaStore.score}</Text>
-      {triviaStore.previousScore !== null &&
+      {triviaStore.previousScore !== null && triviaStore.score > triviaStore.previousScore &&
         <Text>Yout previous best result was {triviaStore.previousScore}</Text>
+      }
+      {triviaStore.previousScore !== null && triviaStore.score < triviaStore.previousScore &&
+        <Text>Yout best result is {triviaStore.previousScore}</Text>
       }
       <Text strong className="Result__list-title">All scores:</Text>
       {triviaStore.scores.length > 0 &&
