@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { action, makeAutoObservable } from "mobx";
 
 import { themesCountForRequest, themesCountForChoice, cluesForGame } from "../settings";
 import * as API from "./api";
@@ -26,6 +26,7 @@ class TriviaStore {
   startGame = (username: string) => {
     this.score = 0;
     this.username = username;
+    this.themes = [];
     this._getThemes();
     this.state = TriviaStates.SELECTTHEME;
   }
@@ -33,20 +34,21 @@ class TriviaStore {
   _getThemes = () => {
     this.loading = true;
     API.getThemes(themesCountForRequest)
-      .then((themes) => {
+      .then(action((themes) => {
         this.themes = processThemes(themes, themesCountForChoice, cluesForGame);
         this.loading = false;
-      })
-      .catch((err) => {
+      }))
+      .catch(action((err) => {
         this.loading = false;
         this.errorMessage = "Can't load themes. Mayby no internet?";
         this.state = TriviaStates.ERROR;
-      })
+      }))
   }
 
   selectTheme = (id: number) => {
     this.currentClue = 0;
     this.selectedTheme = this.themes.find((theme) => theme.id === id) || null;
+    this.clues = [];
     this._getClues();
     this.state = TriviaStates.CLUE_ASK;
   }
@@ -60,19 +62,19 @@ class TriviaStore {
 
     this.loading = true;
     API.getClues(this.selectedTheme.id)
-      .then((clues) => {
+      .then(action((clues) => {
         this.clues = processClues(clues, cluesForGame);
         this.loading = false;
-      })
-      .catch((err) => {
+      }))
+      .catch(action((err) => {
         this.loading = false;
         this.errorMessage = "Can't load clues. Mayby no internet?";
         this.state = TriviaStates.ERROR;
-      })
+      }))
   }
 
   getCurrentClue = () => {
-    return this.clues[this.currentClue];
+    return this.clues.length > 0 ? this.clues[this.currentClue] : null;
   }
 
   checkAnswer = (answer: string) => {
