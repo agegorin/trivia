@@ -22,6 +22,7 @@ const Welcome = ({ defaultUsername, callNextState }: Props) => {
     <Input size="large" value={username}
       className="Welcome__username"
       onChange={(ev) => setUsername(ev.currentTarget.value)}
+      onPressEnter={() => callNextState(username)}
     ></Input>
     <Button type="primary" size="large" shape="round"
       disabled={username.length === 0}

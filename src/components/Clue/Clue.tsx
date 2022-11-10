@@ -32,6 +32,7 @@ const Clue = () => {
         status={triviaStore.state === TriviaStates.CLUE_WRONG ? "error" : ""}
         value={userInput}
         onChange={(ev) => setUserInput(ev.currentTarget.value)}
+        onPressEnter={() => triviaStore.checkAnswer(userInput)}
       ></Input>
 
       {triviaStore.state === TriviaStates.CLUE_ASK &&
@@ -61,7 +62,7 @@ const Clue = () => {
   }
 
   return <PageLayout
-    header={`CLUE NUMBER ${triviaStore.currentClue + 1}`}
+    header={`${triviaStore.selectedTheme?.title} / clue\u00A0${triviaStore.currentClue + 1}`}
     footer={getFooter()}
   >
     {triviaStore.loading && <SpinFC />}
