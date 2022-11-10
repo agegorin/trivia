@@ -8,7 +8,9 @@ class TriviaStore {
   state: TriviaStates = TriviaStates.WELCOME;
   currentClue: number = 0;
   score: number = 0;
+  previousScore: number | null = null;
   username: string = "";
+  scores: Array<{name: string, score: number}> = [];
 
   themes: TriviaTheme[] = [];
   clues: TriviaClue[] = [];
@@ -17,6 +19,7 @@ class TriviaStore {
 
   constructor() {
     makeAutoObservable(this);
+    this.scores = getSavedScores();
   }
 
   startGame = (username: string) => {
@@ -24,7 +27,6 @@ class TriviaStore {
     this.username = username;
     this.getThemes();
     this.state = TriviaStates.SELECTTHEME;
-    console.log(this.username);
   }
 
   getThemes = () => {
@@ -111,10 +113,39 @@ class TriviaStore {
       this.currentClue += 1;
       this.state = TriviaStates.CLUE_ASK;
     } else {
+
+      const scoreIndex = this.scores.findIndex(el => el.name === this.username);
+      if(scoreIndex !== -1) {
+        this.previousScore = this.scores[scoreIndex].score;
+        if (this.score > this.previousScore){
+          this.scores[scoreIndex].score = this.score;
+          this.scores.sort((a, b) => (b.score - a.score));
+          saveScores(this.scores);
+        }
+      } else {
+        this.scores.push({name: this.username, score: this.score});
+        this.scores.sort((a, b) => (b.score - a.score));
+        this.scores = this.scores.slice(0, 10);
+        saveScores(this.scores);
+      }
+
       this.state = TriviaStates.RESULTS;
     }
   }
 
+  goToStart = () => {
+    this.state = TriviaStates.WELCOME;
+  }
+}
+
+const getSavedScores = () => {
+  let scoresString = localStorage.getItem('scores');
+  if (scoresString !== null && typeof scoresString !== "undefined")
+    return JSON.parse(scoresString);
+  return [{name: "Alice", score: 1000}, {name: "John", score: 700}, {name: "Bob", score: 500}];
+}
+const saveScores = (scores: Array<{name: string, score: number}>) => {
+  localStorage.setItem('scores', JSON.stringify(scores));
 }
 
 export default TriviaStore;

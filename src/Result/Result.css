@@ -1,0 +1,45 @@
+.Result {
+  width: 100%;
+  min-height: calc(100vh - 2rem);
+  background: none;
+
+  font-size: 1.4rem;
+}
+
+.Result__header {
+  background: none;
+  text-align: center;
+}
+
+.Result__content {
+  align-self: center;
+  min-width: 300px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.Result__list-title {
+  margin-top: 2rem;
+}
+
+.Result__list {
+  width: 100%;
+}
+
+.Result__list--highlight{
+  font-weight: bold;
+}
+
+.Result__list-name {
+  text-align: right;
+}
+
+.Result__footer {
+  background: none;
+
+  display: flex;
+  justify-content: center;
+}

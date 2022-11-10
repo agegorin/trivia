@@ -9,6 +9,7 @@ import { useStore } from "./store/StoreContext";
 import Welcome from './Welcome/Welcome';
 import SelectTheme from './SelectTheme/SelectTheme';
 import Clue from './Clue/Clue';
+import Result from './Result/Result';
 
 function App() {
   const { triviaStore } = useStore();
@@ -16,13 +17,18 @@ function App() {
   const getCurrentElement = () => {
     switch (triviaStore.state) {
       case TriviaStates.WELCOME:
-        return <Welcome callNextState={(username) => triviaStore.startGame(username)} />
+        return <Welcome
+          defaultUsername={triviaStore.username}
+          callNextState={(username) => triviaStore.startGame(username)}
+        />
       case TriviaStates.SELECTTHEME:
         return <SelectTheme />
       case TriviaStates.CLUE_ASK:
       case TriviaStates.CLUE_RIGHT:
       case TriviaStates.CLUE_WRONG:
         return <Clue />
+      case TriviaStates.RESULTS:
+        return <Result />
       default:
         return "Error happend"
     }

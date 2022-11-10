@@ -8,12 +8,13 @@ import Button from "antd/lib/button";
 import "./Welcome.css";
 
 interface Props {
+  defaultUsername: string,
   callNextState: (username: string) => void
 }
 
-const Welcome = ({ callNextState }: Props) => {
+const Welcome = ({ defaultUsername, callNextState }: Props) => {
 
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState(defaultUsername);
   
   return <div className="Welcome">
     <Title>Trivia</Title>
