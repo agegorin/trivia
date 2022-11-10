@@ -2,9 +2,13 @@ import { makeAutoObservable } from "mobx";
 
 import { themesCountForRequest, themesCountForChoice, cluesForGame } from "../settings";
 import * as API from "./api";
-import { TriviaTheme, TriviaClue } from "./types"
+import { TriviaTheme, TriviaClue, TriviaStates } from "./types"
 
 class TriviaStore {
+  state: TriviaStates = TriviaStates.WELCOME;
+  currentClue: number = 0;
+  score: number = 0;
+
   themes: TriviaTheme[] = [];
   clues: TriviaClue[] = [];
   selectedTheme: TriviaTheme | null = null;
@@ -12,6 +16,12 @@ class TriviaStore {
 
   constructor() {
     makeAutoObservable(this);
+  }
+
+  startGame = () => {
+    this.score = 0;
+    this.getThemes();
+    this.state = TriviaStates.SELECTTHEME;
   }
 
   getThemes = () => {
@@ -42,7 +52,10 @@ class TriviaStore {
   }
 
   selectTheme = (id: number) => {
+    this.currentClue = 0;
     this.selectedTheme = this.themes.find((theme) => theme.id === id) || null;
+    this.getClues();
+    this.state = TriviaStates.CLUE_ASK;
   }
 
   getClues = () => {
@@ -75,6 +88,28 @@ class TriviaStore {
         this.loading = false;
         throw new Error("Problem with loading clues");
       })
+  }
+
+  getCurrentClue = () => {
+    return this.clues[this.currentClue];
+  }
+
+  checkAnswer = (answer: string) => {
+    if (this.clues[this.currentClue].answer === answer) {
+      this.score += this.clues[this.currentClue].value as number;
+      this.state = TriviaStates.CLUE_RIGHT;
+    } else {
+      this.state = TriviaStates.CLUE_WRONG;
+    }
+  }
+
+  nextClue = () => {
+    if (this.currentClue < cluesForGame - 1) {
+      this.currentClue += 1;
+      this.state = TriviaStates.CLUE_ASK;
+    } else {
+      this.state = TriviaStates.RESULTS;
+    }
   }
 
 }

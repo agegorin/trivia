@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 
 import Title from "antd/lib/typography/Title";
@@ -9,38 +9,65 @@ import Input from "antd/lib/input/Input";
 import SpinFC from "antd/lib/spin";
 
 import "./Clue.css";
+import { cluesForGame } from "../settings";
 import { useStore } from "../store/StoreContext";
+import { TriviaStates } from "../store/types";
 
-enum ClueState {
-  ASK,
-  RIGHT,
-  WRONG
-}
-
-interface Props {
-  callNextState: () => void
-}
-
-const Clue = ({ callNextState }: Props) => {
+const Clue = () => {
   const { triviaStore } = useStore();
 
-  const [currentClue, setCurrentClue] = useState(0);
-  const [currentState, setCurrentState] = useState(ClueState.ASK);
+  const [userInput, setUserInput] = useState("");
+
+  const clue = triviaStore.getCurrentClue();
 
   useEffect(() => {
-    triviaStore.getClues();
-  }, [])
+    if (clue) setUserInput(clue.answer); // Правильный ответ подставляется для целей тестирования
+  },[clue])
 
   return <Layout className="Clue">
-    <Header className="Clue__header"><Title>CLUE NUMBER {currentClue + 1}</Title></Header>
+    <Header className="Clue__header"><Title>CLUE NUMBER {triviaStore.currentClue + 1}</Title></Header>
     <Content className="Clue__content">
       {triviaStore.loading && <SpinFC />}
-      {!triviaStore.loading && triviaStore.clues.length > 0 && 
+      {!triviaStore.loading && clue && 
         <>
-          <Text>Value: {triviaStore.clues[currentClue].value}</Text>
-          <Text className="Clue__question">{triviaStore.clues[currentClue].question}</Text>
-          <Input size="large" className="Clue__answerInput" defaultValue={triviaStore.clues[currentClue].answer}></Input>
-          <Button size="large" type="primary" className="Clue__checkButton">Check answer</Button>
+          <Text>Value: {clue.value}</Text>
+          <Text className="Clue__question">{clue.question}</Text>
+          <Text className="Clue__result">
+            {triviaStore.state === TriviaStates.CLUE_RIGHT && "You right!"}
+            {triviaStore.state === TriviaStates.CLUE_WRONG && `Right answer: ${clue.answer}`}
+          </Text>
+          <Input
+            size="large"
+            className="Clue__answerInput"
+            disabled={triviaStore.state !== TriviaStates.CLUE_ASK}
+            status={triviaStore.state === TriviaStates.CLUE_WRONG ? "error" : ""}
+            value={userInput}
+            onChange={(ev) => setUserInput(ev.currentTarget.value)}
+          ></Input>
+
+          {triviaStore.state === TriviaStates.CLUE_ASK &&
+            <>
+              <Button size="large" type="primary"
+                className="Clue__checkButton"
+                onClick={() => triviaStore.checkAnswer(userInput)}
+              >Check answer</Button>
+            </>
+          }
+
+          {triviaStore.state !== TriviaStates.CLUE_ASK && triviaStore.currentClue < cluesForGame - 1 &&
+            <Button size="large" type="primary"
+              className="Clue__checkButton"
+              onClick={() => triviaStore.nextClue()}
+            >Next clue</Button>
+          }
+
+          {triviaStore.state !== TriviaStates.CLUE_ASK && triviaStore.currentClue >= cluesForGame - 1 &&
+            <Button size="large" type="primary"
+              className="Clue__checkButton"
+              onClick={() => triviaStore.nextClue()}
+            >See results</Button>
+          }
+
         </>
       }
     </Content>

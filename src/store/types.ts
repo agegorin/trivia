@@ -19,3 +19,13 @@ export interface TriviaClue {
   invalid_count?: any
   category: TriviaTheme
 }
+
+export enum TriviaStates {
+  WELCOME,
+  SELECTTHEME,
+  CLUE_ASK,
+  CLUE_RIGHT,
+  CLUE_WRONG,
+  RESULTS,
+  ERROR
+}

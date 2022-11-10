@@ -1,44 +1,44 @@
 import React, { useState } from 'react';
+import { observer } from 'mobx-react-lite';
 import 'antd/dist/antd.css';
 
 import './App.css';
+import { TriviaStates } from "./store/types";
+import { useStore } from "./store/StoreContext";
 
 import Welcome from './Welcome/Welcome';
 import SelectTheme from './SelectTheme/SelectTheme';
 import Clue from './Clue/Clue';
 
-enum TriviaStates {
-  WELCOME,
-  SELECTTHEME,
-  CLUE,
-  RESULTS,
-  ERROR
-}
-
 function App() {
+  const { triviaStore } = useStore();
 
-  let [currentState, setCurrentState] = useState(TriviaStates.WELCOME);
-  let [currentClue, setCurrentClue] = useState(0);
-
-  let callNextState = () => {
-    switch (currentState) {
+  const getCurrentElement = () => {
+    switch (triviaStore.state) {
       case TriviaStates.WELCOME:
-        setCurrentState(TriviaStates.SELECTTHEME);
-        break;
+        return <Welcome callNextState={() => triviaStore.startGame()} />
       case TriviaStates.SELECTTHEME:
-        setCurrentState(TriviaStates.CLUE);
-        break;
+        return <SelectTheme />
+      case TriviaStates.CLUE_ASK:
+      case TriviaStates.CLUE_RIGHT:
+      case TriviaStates.CLUE_WRONG:
+        return <Clue />
+      default:
+        return "Error happend"
     }
   }
 
+  const getBackgroundColor = () => {
+    if (triviaStore.state === TriviaStates.CLUE_RIGHT) return 'rgb(214 255 214)';
+    if (triviaStore.state === TriviaStates.CLUE_WRONG) return 'rgb(255 214 214)';
+    return 'transparent';
+  }
+
   return (
-    <div className="App">
-      {currentState === TriviaStates.WELCOME && <Welcome callNextState={callNextState} />}
-      {currentState === TriviaStates.SELECTTHEME && <SelectTheme callNextState={callNextState} />}
-      {currentState === TriviaStates.CLUE && <Clue callNextState={callNextState} />}
-      
+    <div className="App" style={{backgroundColor: getBackgroundColor()}}>
+      {getCurrentElement()}
     </div>
   );
 }
 
-export default App;
+export default observer(App);
