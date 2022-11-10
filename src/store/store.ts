@@ -2,7 +2,7 @@ import { makeAutoObservable } from "mobx";
 
 import { themesCountForRequest, themesCountForChoice, cluesForGame } from "../settings";
 import * as API from "./api";
-import { TriviaTheme, TriviaClue, TriviaStates } from "./types"
+import { TriviaTheme, TriviaClue, TriviaScore, TriviaStates } from "./types"
 
 class TriviaStore {
   state: TriviaStates = TriviaStates.WELCOME;
@@ -10,8 +10,7 @@ class TriviaStore {
   score: number = 0;
   previousScore: number | null = null;
   username: string = "";
-  scores: Array<{name: string, score: number}> = [];
-
+  scores: TriviaScore[] = [];
   themes: TriviaTheme[] = [];
   clues: TriviaClue[] = [];
   selectedTheme: TriviaTheme | null = null;
@@ -19,35 +18,21 @@ class TriviaStore {
 
   constructor() {
     makeAutoObservable(this);
-    this.scores = getSavedScores();
+    this.scores = API.getSavedScores();
   }
 
   startGame = (username: string) => {
     this.score = 0;
     this.username = username;
-    this.getThemes();
+    this._getThemes();
     this.state = TriviaStates.SELECTTHEME;
   }
 
-  getThemes = () => {
+  _getThemes = () => {
     this.loading = true;
     API.getThemes(themesCountForRequest)
       .then((themes) => {
-        this.themes = [];
-
-        // Не все темы содержат нужное количество вопросов
-        // количечество тем увеличивается на 1, потому что API отдает один вопрос с value == null
-        const themesWithClues: TriviaTheme[] = themes.filter((theme) => theme.clues_count >= cluesForGame + 1);
-
-        if (themesWithClues.length < themesCountForChoice) throw new Error("Too small amount of clues");
-
-        // Выбираем случайные темы из подходящих
-        for (let i = 0; i < themesCountForChoice; i++) {
-          let index = Math.floor(Math.random() * themesWithClues.length);
-          this.themes.push(themesWithClues[index]);
-          themesWithClues.splice(index, 1);
-        }
-
+        this.themes = processThemes(themes, themesCountForChoice, cluesForGame);
         this.loading = false;
       })
       .catch((err) => {
@@ -59,34 +44,19 @@ class TriviaStore {
   selectTheme = (id: number) => {
     this.currentClue = 0;
     this.selectedTheme = this.themes.find((theme) => theme.id === id) || null;
-    this.getClues();
+    this._getClues();
     this.state = TriviaStates.CLUE_ASK;
   }
 
-  getClues = () => {
+  _getClues = () => {
     if (this.selectedTheme === null) {
       throw new Error("Try to get clues without seleсted theme");
-      return
     };
 
     this.loading = true;
     API.getClues(this.selectedTheme.id)
       .then((clues) => {
-        this.clues = [];
-
-        let filteredClues = clues.filter(clue => clue.value !== null);
-        let selectedClues = [];
-
-        // Выбираем случайные вопросы
-        for (let i = 0; i < themesCountForChoice; i++) {
-          let index = Math.floor(Math.random() * filteredClues.length);
-          selectedClues.push(filteredClues[index]);
-          filteredClues.splice(index, 1);
-        }
-
-        selectedClues.sort((a, b) => a.value as number - (b.value as number));
-
-        this.clues = selectedClues;
+        this.clues = processClues(clues, cluesForGame);
         this.loading = false;
       })
       .catch((err) => {
@@ -110,23 +80,24 @@ class TriviaStore {
 
   nextClue = () => {
     if (this.currentClue < cluesForGame - 1) {
+      // NEXT CLUE
       this.currentClue += 1;
       this.state = TriviaStates.CLUE_ASK;
     } else {
-
+      // SHOW RESULTS
       const scoreIndex = this.scores.findIndex(el => el.name === this.username);
-      if(scoreIndex !== -1) {
+      if (scoreIndex !== -1) {
         this.previousScore = this.scores[scoreIndex].score;
-        if (this.score > this.previousScore){
+        if (this.score > this.previousScore) {
           this.scores[scoreIndex].score = this.score;
           this.scores.sort((a, b) => (b.score - a.score));
-          saveScores(this.scores);
+          API.saveScores(this.scores);
         }
       } else {
-        this.scores.push({name: this.username, score: this.score});
+        this.scores.push({ name: this.username, score: this.score });
         this.scores.sort((a, b) => (b.score - a.score));
         this.scores = this.scores.slice(0, 10);
-        saveScores(this.scores);
+        API.saveScores(this.scores);
       }
 
       this.state = TriviaStates.RESULTS;
@@ -138,14 +109,40 @@ class TriviaStore {
   }
 }
 
-const getSavedScores = () => {
-  let scoresString = localStorage.getItem('scores');
-  if (scoresString !== null && typeof scoresString !== "undefined")
-    return JSON.parse(scoresString);
-  return [{name: "Alice", score: 1000}, {name: "John", score: 700}, {name: "Bob", score: 500}];
+const processThemes: ((themes: TriviaTheme[], count: number, cluesCount: number) => TriviaTheme[]) = (themes, count, cluesCount) => {
+  const themesResult: TriviaTheme[] = [];
+
+  // Не все темы содержат нужное количество вопросов
+  // количечество тем увеличивается на 1, потому что API отдает один вопрос с value == null
+  const themesWithClues: TriviaTheme[] = themes.filter((theme) => theme.clues_count >= cluesCount + 1);
+
+  if (themesWithClues.length < count) throw new Error("Too small amount of clues");
+
+  // Выбираем случайные темы из подходящих
+  for (let i = 0; i < count; i++) {
+    let index = Math.floor(Math.random() * themesWithClues.length);
+    themesResult.push(themesWithClues[index]);
+    themesWithClues.splice(index, 1);
+  }
+
+  return themesResult;
 }
-const saveScores = (scores: Array<{name: string, score: number}>) => {
-  localStorage.setItem('scores', JSON.stringify(scores));
+
+const processClues: ((clues: TriviaClue[], cluesCount: number) => TriviaClue[]) = (clues, cluesCount) => {
+
+  let filteredClues = clues.filter(clue => clue.value !== null);
+  let selectedClues = [];
+
+  // Выбираем случайные вопросы
+  for (let i = 0; i < cluesCount; i++) {
+    let index = Math.floor(Math.random() * filteredClues.length);
+    selectedClues.push(filteredClues[index]);
+    filteredClues.splice(index, 1);
+  }
+
+  selectedClues.sort((a, b) => a.value as number - (b.value as number));
+
+  return selectedClues;
 }
 
 export default TriviaStore;

@@ -20,6 +20,11 @@ export interface TriviaClue {
   category: TriviaTheme
 }
 
+export interface TriviaScore {
+  name: string,
+  score: number
+}
+
 export enum TriviaStates {
   WELCOME,
   SELECTTHEME,
